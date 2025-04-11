@@ -3733,7 +3733,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "space-mechanics-final"
+name = "space-mech-final"
 version = "0.1.0"
 dependencies = [
  "bevy",
