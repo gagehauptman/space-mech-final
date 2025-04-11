@@ -1,0 +1,66 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+%Template version as of 6/27/2024
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+	
+	\title{Generalized Interplanetary Mission Planning In An N-Body Solar System via Lambert Parameterization\\
+	}
+	
+	\author{\IEEEauthorblockN{Gage Hauptman}
+		\IEEEauthorblockA{\textit{College of Engineering} \\
+			\textit{Embry-Riddle Aeronautical University}\\
+			Daytona Beach, United States\\
+			ghauptman@proton.me}
+	}
+	
+	\maketitle
+	
+	\begin{abstract}
+		This paper presents a general model for solving interplanetary mission delta-v requirements by using a 4th-order runge-kutta integrator to accurately predict future solar system states, enabling increased mission planning accuracy compared to a traditional keplerian solar system model. Future planetary positions as determined by the integrator is used in lambert-problem parameterization to generate a porkchop plot of delta-v requirements for a future set of dates. A 3d view with different inertial frames enables viewing of calculated transfers, showing both the patched conics solution and an n-body integration of the mission plan, enabling consideration of any perturbation which may result in mission failure.
+	\end{abstract}
+	
+	\begin{IEEEkeywords}
+		n-body, lambert, interplanetary, porkchop
+	\end{IEEEkeywords}
+	
+	\section{Introduction}
+	Accurate prediction of delta-v requirements is a crucial aspect of interplanetary mission planning, as it directly influences spacecraft propulsion and trajectory optimization. Traditional mission planning models, often based on Keplerian orbital mechanics, provide a simplified view of solar system dynamics, assuming idealized two-body interactions. While these models offer quick approximations, they fail to account for more complex gravitational influences and perturbations that can significantly affect mission success, especially over long durations or in the presence of multiple planetary bodies.
+	
+	This paper presents an advanced modeling approach that leverages a 4th-order Runge-Kutta integrator to provide a more precise prediction of future solar system states, extending the capabilities of traditional Keplerian models. By utilizing this integrator, the model accounts for the gravitational influences of all solar system bodies, leading to a more accurate depiction of planetary positions and their resulting impact on mission planning. The predicted future positions of celestial bodies are then incorporated into a Lambert problem formulation to generate a porkchop plot, which displays delta-v requirements across a range of possible mission dates.
+	
+	Moreover, the implementation of this model was performed in a 3D environment, enabling the exploration of mission trajectories in different inertial reference frames. This visualization compares the simplified patched conics solution with the more rigorous n-body integration, which includes perturbations that can affect mission outcomes. By considering these perturbations, this model enables consideration of potential unexpected planetary encounters.
+	
+	\subsection{N-Body Implementations}
+	
+	The implementation of efficient and accurate n-body simulations is an area of ongoing research, with many different algorithms in use. However, numerical n-body integration is known to be more accurate for complex body interactions, such as solar system dynamics over long periods of time \cite{b1}. For shorter durations with few bodies, a Runge-Kutta 4th order algorithm is typically considered sufficiently precise, with a low time step \cite{b2}. Active research is being performed into faster, more efficient integrators, such as Taylor series numerical integration \cite{b3}.
+	
+	\subsection{Keplerian vs N-Body Accuracy}
+	More subsections for literary review :X
+	
+	\newpage
+	
+	\section{Theoretical Development}
+	\subsection{N-Body Integration}
+
+	\section{Results}
+	
+	\section{Conclusions and Future Work}
+	
+	\begin{thebibliography}{00}
+		\bibitem{b1} G. D. Quinlan and S. Tremaine, "On the reliability of gravitational N-body integrations," Monthly Notices of the Royal Astronomical Society, vol. 259, no. 3, pp. 722-736, Dec. 1992, doi: 10.1093/mnras/259.3.722.
+		\bibitem{b2} M. W. Weeks and S. W. Thrasher, "Comparison of Fixed and Variable Time Step Trajectory Integration Methods for Cislunar Trajectories," presented at the 17th AAS/AIAA Space Flight Mechanics Meeting, Sedona, AZ, USA, Jan. 28–Feb. 1, 2007.
+		\bibitem{b3} J. R. Scott and M. C. Martini, "High Speed Solution of Spacecraft Trajectory Problems Using Taylor Series Integration," presented at the Astrodynamics Specialist Conference and Exhibit, Honolulu, HI, USA, Aug. 18–21, 2008. 
+		
+	\end{thebibliography}
+	
+\end{document}
