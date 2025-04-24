@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.3.28)  24 APR 2025 10:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.3.28)  24 APR 2025 15:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -297,42 +297,70 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \@float@everytoks=\toks25
 \@floatcapt=\box58
 )
+(/usr/share/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count298
+\lst@gtempboxa=\box59
+\lst@token=\toks26
+\lst@length=\count299
+\lst@currlwidth=\dimen186
+\lst@column=\count300
+\lst@pos=\count301
+\lst@lostspace=\dimen187
+\lst@width=\dimen188
+\lst@newlines=\count302
+\lst@lineno=\count303
+\lst@maxwidth=\dimen189
+
+(/usr/share/texmf-dist/tex/latex/listings/lstpatch.sty
+File: lstpatch.sty 2024/09/23 1.10c (Carsten Heinz)
+)
+(/usr/share/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
+\c@lstnumber=\count304
+\lst@skipnumbers=\count305
+\lst@framebox=\box60
+)
+(/usr/share/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2024/09/23 1.10c listings configuration
+))
+Package: listings 2024/09/23 1.10c (Carsten Heinz)
+
 (/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count298
-\l__pdf_internal_box=\box59
+\l__color_backend_stack_int=\count306
+\l__pdf_internal_box=\box61
 ) (./final.aux)
 \openout1 = `final.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
 
 -- Lines per column: 56 (exact).
 (/usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count299
-\scratchdimen=\dimen186
-\scratchbox=\box60
-\nofMPsegments=\count300
-\nofMParguments=\count301
-\everyMPshowfont=\toks26
-\MPscratchCnt=\count302
-\MPscratchDim=\dimen187
-\MPnumerator=\count303
-\makeMPintoPDFobject=\count304
-\everyMPtoPDFconversion=\toks27
+\scratchcounter=\count307
+\scratchdimen=\dimen190
+\scratchbox=\box62
+\nofMPsegments=\count308
+\nofMParguments=\count309
+\everyMPshowfont=\toks27
+\MPscratchCnt=\count310
+\MPscratchDim=\dimen191
+\MPnumerator=\count311
+\makeMPintoPDFobject=\count312
+\everyMPtoPDFconversion=\toks28
 ) (/usr/share/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -342,26 +370,54 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Underfull \hbox (badness 1442) in paragraph at lines 38--39
-\OT1/ptm/m/n/10 as-pect of in-ter-plan-e-tary mis-sion plan-ning, as it di-rect
-ly
- []
+\c@lstlisting=\count313
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 38--39
+Underfull \hbox (badness 4416) in paragraph at lines 53--54
+\OT1/ptm/m/n/10 and per-tur-ba-tions that can sig-nif-i-cantly af-fect mis-sion
 
  []
 
 
-
-
-Underfull \hbox (badness 1454) in paragraph at lines 46--47
-\OT1/ptm/m/n/10 other grav-i-ta-tional in-flu-ences. This as-sump-tion sim-pli-
-fies
+Underfull \hbox (badness 1668) in paragraph at lines 53--54
+\OT1/ptm/m/n/10 and grav-i-ta-tional in-flu-ence par-tic-u-larly causes sig-nif
+-i-cant
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 46--47
+Underfull \hbox (badness 10000) in paragraph at lines 53--54
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 55--56
+
+ []
+
+
+
+
+Underfull \hbox (badness 1910) in paragraph at lines 61--62
+\OT1/ptm/m/n/10 ap-prox-i-ma-tions [13], as out-lined in stan-dard-ized de-sign
+
+ []
+
+
+Underfull \hbox (badness 1558) in paragraph at lines 61--62
+\OT1/ptm/m/n/10 pro-ce-dures [3]. These mod-els were suf-fi-cient given the
+ []
+
+
+Underfull \hbox (badness 1394) in paragraph at lines 61--62
+\OT1/ptm/m/n/10 land-ings, ren-dezvous, and sam-ple re-turn mis-sions|more
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--62
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--68
 
  []
 
@@ -372,23 +428,228 @@ ts/enc/dvips/base/8r.enc}
 
 
 ]
-LaTeX Font Info:    Trying to load font information for U+msa on input line 58.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 77.
 
  (/usr/share/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 58.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 77.
 
 
 (/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
+
 <fig1.png, id=10, 514.92375pt x 345.29pt>
 File: fig1.png Graphic file (type png)
 <use fig1.png>
-Package pdftex.def Info: fig1.png  used on input line 89.
+Package pdftex.def Info: fig1.png  used on input line 120.
 (pdftex.def)             Requested size: 252.0pt x 168.97755pt.
 
+
+[2 <./fig1.png (PNG copy)>]
+
+<fig2.png, id=23, 1067.99pt x 1021.8175pt>
+File: fig2.png Graphic file (type png)
+<use fig2.png>
+Package pdftex.def Info: fig2.png  used on input line 194.
+(pdftex.def)             Requested size: 252.0pt x 241.09383pt.
+
+
+[3 <./fig2.png (PNG copy)>]
+Underfull \hbox (badness 6708) in paragraph at lines 202--203
+[]\OT1/ptm/m/n/10 The sim-ple Hohmann trans-fer in a patched-conics
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 202--203
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 204--205
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 223--224
+
+ []
+
+
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 225--226
+
+ []
+
+<fig3.png, id=30, 732.7375pt x 271.0125pt>
+File: fig3.png Graphic file (type png)
+<use fig3.png>
+Package pdftex.def Info: fig3.png  used on input line 230.
+(pdftex.def)             Requested size: 252.0pt x 93.20166pt.
+
+Underfull \hbox (badness 1701) in paragraph at lines 235--236
+\OT1/ptm/m/n/10 burns could be mod-eled and op-ti-mized by the n-body
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 235--236
+
+ []
+
+
+
+[4 <./fig3.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 244--245
+[]\OT1/ptm/m/n/8 L. M. Burke, R. D. Falck, and M. L. McGuire, \In-ter-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 244--245
+\OT1/ptm/m/n/8 plan-e-tary Mis-sion De-sign Hand-book: Earth-to-Mars Mis-sion
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 244--245
+\OT1/ptm/m/n/8 Op-por-tu-ni-ties 2026 to 2045," NASA Tech-ni-cal Mem-o-ran-dum
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 244--245
+\OT1/ptm/m/n/8 NASA/TM-2010-216764, Oct. 2010. [On-line]. Avail-able:
+ []
+
+
+Overfull \hbox (13.78998pt too wide) in paragraph at lines 244--245
+\OT1/ptm/m/n/8 https://ntrs.nasa.gov/api/citations/20100037210/downloads/201000
+37210.pdf 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 248--249
+[]\OT1/ptm/m/n/8 NASA STI Pro-gram Of-fice, \OT1/ptm/m/it/8 In-ter-plan-e-tary 
+Mis-sion De-sign
+ []
+
+
+Underfull \hbox (badness 5622) in paragraph at lines 248--249
+\OT1/ptm/m/it/8 Hand-book\OT1/ptm/m/n/8 , NASA SP-1998-0015558, 1998. [On-line]
+. Avail-able:
+ []
+
+
+Overfull \hbox (13.78998pt too wide) in paragraph at lines 248--249
+\OT1/ptm/m/n/8 https://ntrs.nasa.gov/api/citations/19980210557/downloads/199802
+10557.pdf 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 252--253
+[]\OT1/ptm/m/n/8 \Two-Body Prob-lem," Sci-enceDi-rect. [On-line]. Avail-able:
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 252--253
+\OT1/ptm/m/n/8 https://www.sciencedirect.com/topics/earth-and-planetary-science
+s/two-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 254--255
+[]\OT1/ptm/m/n/8 R. J. Blassingame, \An Anal-y-sis of N-Body Tra-jec-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 254--255
+\OT1/ptm/m/n/8 tory Prop-a-ga-tion," M.S. the-sis, Dept. Aero. Eng., Cal
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 254--255
+\OT1/ptm/m/n/8 Poly, San Luis Obispo, CA, 2011. [On-line]. Avail-able:
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 256--257
+[]\OT1/ptm/m/n/8 \Patched Conic," Sci-enceDi-rect. [On-line]. Avail-able:
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 258--259
+[]\OT1/ptm/m/n/8 W. R. Hohmann, \The Law of El-lip-ti-cal Or-bit Trans-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 258--259
+\OT1/ptm/m/n/8 fers," \OT1/ptm/m/it/8 NASA TN D{2779\OT1/ptm/m/n/8 , Feb. 1960.
+ [On-line]. Avail-able:
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 262--263
+[]\OT1/ptm/m/n/8 Arizona State Uni-ver-sity, \Lec-ture 10: Ren-dezvous and
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 262--263
+\OT1/ptm/m/n/8 Tar-get-ing { Lam-bert's Prob-lem," 2023. [On-line]. Avail-able:
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 264--265
+[]\OT1/ptm/m/n/8 C. G. Park, \Rapid Cal-cu-la-tion of Space-craft Tra-jec-to-ri
+es
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 264--265
+\OT1/ptm/m/n/8 Us-ing Ef-fi-cient Tay-lor Se-ries In-te-gra-tion," NASA Tech.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 264--265
+\OT1/ptm/m/n/8 Memo. NASA/TM-2011-216778, 2011. [On-line]. Avail-able:
+ []
+
+
+Overfull \hbox (13.78998pt too wide) in paragraph at lines 264--265
+\OT1/ptm/m/n/8 https://ntrs.nasa.gov/api/citations/20110003034/downloads/201100
+03034.pdf 
+ []
+
+
+Underfull \hbox (badness 3240) in paragraph at lines 266--267
+[]\OT1/ptm/m/n/8 Anonymous, \Nu-mer-i-cal In-te-gra-tion in a Rigid-Body Tra-je
+c-tory
+ []
+
+
+Overfull \hbox (13.78998pt too wide) in paragraph at lines 266--267
+\OT1/ptm/m/n/8 https://ntrs.nasa.gov/api/citations/19690029384/downloads/196900
+29384.pdf 
+ []
+
+
+Overfull \hbox (13.78998pt too wide) in paragraph at lines 268--269
+\OT1/ptm/m/n/8 https://ntrs.nasa.gov/api/citations/19660021627/downloads/196600
+21627.pdf 
+ []
+
+
+
+(/usr/share/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2024/09/23 1.10c listings language file
+)
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 2
+78.
+
+(/usr/share/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <5> not available
+(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 281.
 
 
 ** Conference Paper **
@@ -403,35 +664,39 @@ Before submitting the final camera ready copy, remember to:
 
 
 
-[2 <./fig1.png (PNG copy)>] (./final.aux)
+[5] (./final.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 4890 strings out of 475171
- 77036 string characters out of 5767095
- 485954 words of memory out of 5000000
- 27840 multiletter control sequences out of 15000+600000
- 593003 words of font info for 104 fonts, out of 8000000 for 9000
+ 7208 strings out of 475171
+ 106820 string characters out of 5767095
+ 998563 words of memory out of 5000000
+ 30132 multiletter control sequences out of 15000+600000
+ 597080 words of font info for 113 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 57i,8n,65p,875b,271s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,10n,65p,973b,1822s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmmi8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-r10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/sh
-are/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmsy7.pfb></usr/share/texmf-dist/fonts/type1/urw/times/utmb8a.
-pfb></usr/share/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texmf-
-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/ti
-mes/utmri8a.pfb>
-Output written on final.pdf (2 pages, 189732 bytes).
+ts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmmi7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+mi8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/s
+hare/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmsy5.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></us
+r/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-d
+ist/fonts/type1/urw/courier/ucrb8a.pfb></usr/share/texmf-dist/fonts/type1/urw/c
+ourier/ucrr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb></
+usr/share/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf-dist/fo
+nts/type1/urw/times/utmbi8a.pfb></usr/share/texmf-dist/fonts/type1/urw/times/ut
+mr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on final.pdf (5 pages, 1170262 bytes).
 PDF statistics:
- 78 PDF objects out of 1000 (max. 8388607)
- 46 compressed objects within 1 object stream
+ 119 PDF objects out of 1000 (max. 8388607)
+ 70 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

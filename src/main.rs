@@ -214,8 +214,8 @@ fn setup(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials
         hypothetical_display = Some(root_grid.spawn_spatial((
             Mesh3d(meshes.add(mesh)),
             MeshMaterial3d(materials.add(StandardMaterial {
-                base_color: Color::WHITE,
-                emissive: LinearRgba::new(0., 0.5, 0., 0.5),
+                base_color: Color::rgb(0.5, 0.0, 0.5),
+                emissive: LinearRgba::new(1., 1.0, 1., 0.7),
                 unlit: true,
                 ..default()
             })),
@@ -344,6 +344,7 @@ fn populate_state(mut state_keeper: ResMut<StateKeeper>) {
                 lowest_dv = dv;
                 lowest_dv_pos = [depart,travel];
                 lowest_dv_short = is_ip1_lowest;
+                state_keeper.current_step = depart;
             }
         }
         dv_grid.push(row);

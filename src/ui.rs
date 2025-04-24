@@ -46,6 +46,15 @@ pub fn button_interaction(mut state_keeper: ResMut<StateKeeper>, mut button_quer
         if *interaction == Interaction::Pressed {
             state_keeper.inertial = button.id;
             camera_state.focused = button.id;
+            if button.id == 3 {
+                state_keeper.current_step = state_keeper.interplanetary_selection.2;
+            } else if button.id == 4 {
+                state_keeper.current_step = state_keeper.interplanetary_selection.3;
+            } else if button.id == 9 {
+                state_keeper.current_step = state_keeper.interplanetary_selection.2;
+            } else if button.id == 0 {
+                state_keeper.current_step = state_keeper.interplanetary_selection.2;
+            }
             info!("Selected {}", button.id);
         }
     }
