@@ -1,8 +1,9 @@
 use std::slice::Windows;
 use bevy::input::keyboard::KeyboardInput;
-use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
+use bevy::input::mouse::{MouseButtonInput, MouseScrollUnit, MouseWheel};
 use bevy::prelude::*;
 use bevy::transform;
+use bevy::window::PrimaryWindow;
 use crate::*;
 use chrono::{DateTime, Duration, Local};
 
@@ -23,10 +24,12 @@ pub fn camera_controller(
     keys: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
     mut evr_scroll: EventReader<MouseWheel>,
+    mouse_input: Res<ButtonInput<MouseButton>>,
 
     mut query1: Query<(&BodyOverlayDisplay, &mut Node, &Text), Without<TextOverlay>>,
     query2: Query<(&BodyDisplay, &ObjectID, &GlobalTransform)>,
-    mut query3: Query<(&Node, &mut Text, &TextOverlay), (With<TextOverlay>, Without<BodyOverlayDisplay>)>
+    mut query3: Query<(&Node, &mut Text, &TextOverlay), (With<TextOverlay>, Without<BodyOverlayDisplay>)>,
+    q_windows: Query<&Window, With<PrimaryWindow>>,
 ) {
     let (camera, camera_global_transform, mut camera_state) = camera.into_inner();
     let root_grid = root_grid.into_inner();
@@ -34,6 +37,17 @@ pub fn camera_controller(
     let mut abs_offset = state_keeper.state.get(&state_keeper.current_step).unwrap().get(&camera_state.focused).unwrap()[0];
 
     let speed = 1.0;
+
+    if mouse_input.just_pressed(MouseButton::Left) {
+        if let Some(position) = q_windows.single().cursor_position() {
+            let pos_x = q_windows.single().width() - position.x;
+            let pos_y = position.y;
+            if pos_x < 1105.0 && pos_x > 5.0 {
+                info!("{}", pos_x);
+            }
+        }
+    }
+
     if keys.pressed(KeyCode::KeyW) {
         camera_state.tilt = camera_state.tilt + speed * time.delta_secs_f64();
         if camera_state.tilt > 89.9f64.to_radians() {
@@ -108,18 +122,22 @@ pub fn camera_controller(
 
     // // Update planet labels to match the position of the planets
     for (_body_display, body_object_id, body_global_transform) in query2.iter() {
+        let (_body_overlay_display, mut node, mut _text) = query1.get_mut(state_keeper.info.get(&body_object_id.id).unwrap().body_overlay_display_id.unwrap()).unwrap();
+        let world_position = body_global_transform.translation();
         if body_object_id.id == state_keeper.inertial || state_keeper.info.get(&body_object_id.id).unwrap().kepler_parent == state_keeper.inertial {
-            let (_body_overlay_display, mut node, mut _text) = query1.get_mut(state_keeper.info.get(&body_object_id.id).unwrap().body_overlay_display_id.unwrap()).unwrap();
-            let world_position = body_global_transform.translation();
             if let Ok(viewport_pos) = camera.world_to_viewport(camera_global_transform, world_position) {
+                node.display = Display::DEFAULT;
                 node.top = Val::Px(viewport_pos.y);
                 node.left = Val::Px(viewport_pos.x);
             } else {
-                // Handle the case when the projection fails
+                node.display = Display::None;
             }
+        } else {
+            node.display = Display::None;
         }
     }
 
+    // Display OE
     for (node, mut text, text_overlay) in query3.iter_mut() {
         if text_overlay.id == 0 {
             let t0 = DateTime::parse_from_str("2025 Apr 01 12:00:00 +0000", "%Y %b %d %H:%M:%S %z").unwrap();
@@ -130,6 +148,10 @@ pub fn camera_controller(
             let state = state_keeper.state.get(&state_keeper.current_step).unwrap().get(&camera_state.focused).unwrap();
             let current_oe = oe_from_rv(state_keeper.info.get(&parent_id).unwrap().mu, &sub_body_state(state, parent_state));
             text.0 = current_oe.to_string();
+        } else if text_overlay.id == 2 {
+            if let Some(f) = &state_keeper.interplanetary {
+                text.0 = format!("dv1: {}, dv2: {}", f.dv1 as i32, f.dv2 as i32);
+            }
         }
     }
 }

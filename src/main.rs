@@ -3,11 +3,14 @@ mod bodies_init;
 mod camera;
 mod keplerian;
 mod ui;
+mod interplanetary;
+mod porkchop;
 
 use std::time::Instant;
 
 use std::collections::HashMap;
 use std::f64::consts::PI;
+use std::f64::INFINITY;
 use std::os::linux::raw::stat;
 use bevy::core_pipeline::bloom::Bloom;
 use bevy::core_pipeline::Skybox;
@@ -23,6 +26,8 @@ use big_space::prelude::*;
 use crate::camera::CameraState;
 use crate::keplerian::*;
 use crate::ui::*;
+use crate::interplanetary::*;
+use crate::porkchop::*;
 
 type BodyState = [DVec3;2]; // r, v
 fn add_body_state(a: &BodyState, b: &BodyState) -> BodyState {
@@ -67,7 +72,9 @@ struct StateKeeper {
     info: BodyInfos,
     inertial: u32,
     hypothetical: Option<Entity>,
-    interplanetary: Interplanetary,
+    interplanetary: Option<Interplanetary>,
+    interplanetary_selection: (u32,u32,u32,u32,bool),
+    interplanetaries: HashMap<u32, Vec<(u32, Interplanetary)>>
 }
 
 #[derive(Component)]
@@ -114,9 +121,8 @@ fn main() {
         .add_systems(Startup, ui::setup_ui.after(populate_state))
         .add_systems(Update, display_state.after(main_tick))
         .add_systems(Update, camera::camera_controller.after(display_state))
-        .add_systems(Update, main_tick.after(populate_state))
-        .add_systems(Update, populate_state)
-        .add_systems(Update, ui::button_interaction)
+        .add_systems(Update, main_tick)
+        .add_systems(Update, button_interaction)
         .run();
 }
 
@@ -159,6 +165,16 @@ fn setup(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials
            ..default()
         }),
     );
+    commands.spawn((
+           Text::new("IP"),
+           TextOverlay { id: 2 },
+           Node {
+               position_type: PositionType::Absolute,
+               bottom: Val::Px(12.0),
+               left: Val::Px(12.0),
+               ..default()
+           }),
+    );
 
     let mut hypothetical_display: Option<Entity> = None;
 
@@ -186,7 +202,7 @@ fn setup(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials
                 Exposure::SUNLIGHT,
                 Bloom::NATURAL,
                 Skybox {
-                    image: asset_server.load("textures/hdr-cubemap-4096x4096.ktx2"), // Pretty skybox! What's the point of anything if you don't have ✨aesthetic✨. FPS is lame anyways.
+                    image: asset_server.load("textures/hdr-cubemap-1024x1024.ktx2"), // Pretty skybox! What's the point of anything if you don't have ✨aesthetic✨. FPS is lame anyways.
                     brightness: 75000.,
                     ..default()
                 }));
@@ -287,28 +303,60 @@ fn setup(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials
 
     time_states.insert(0, body_states);
 
-    commands.insert_resource(StateKeeper {paused: true, current_step: 0, time: 0.0, dt: 100.0, step_limit: 20000, last_step_computed: 0, state: time_states, info: body_infos, inertial: 0, hypothetical: hypothetical_display, interplanetary: Interplanetary {body0: 0, body1: 3, body2: 4, oe0: OE::empty(), oe1: OE::empty(), oe2: OE::empty() } });
+    commands.insert_resource(StateKeeper {paused: true, current_step: 0, time: 0.0, dt: 100.0, step_limit: 864*365*4, last_step_computed: 0, state: time_states, info: body_infos, inertial: 0, hypothetical: hypothetical_display, interplanetary: None, interplanetary_selection: (3,4,0,864*120,true), interplanetaries: HashMap::new() });
 }
 
-// Populate all empty states from t(1) to t(end) where end is how many steps ahead of t0 to predict
 fn populate_state(mut state_keeper: ResMut<StateKeeper>) {
-    let start = Instant::now();
-    let mut time_limit = true;
-    if state_keeper.last_step_computed == 0 {
-        time_limit = false;
-    }
-    let mut steps = 0;
-    for i in state_keeper.last_step_computed+1..state_keeper.step_limit {
+    // Populate the state
+    for i in 1..state_keeper.step_limit {
         let last_state = state_keeper.state.get(&(i - 1)).unwrap();
         let new_state = nbody::rk4_step(&state_keeper.info, &last_state, state_keeper.dt);
         state_keeper.state.insert(i, new_state);
         state_keeper.last_step_computed=i;
-        steps += 1;
-
-        if start.elapsed().as_millis() > 16 && time_limit {
-            break
-        }
     }
+
+    // Porkchop plot shenanigans
+    let mut dv_grid: Vec<Vec<f32>> = Vec::with_capacity(365 * 2);
+    let step_day = 864;
+    let max_travel = 12 * 30 * step_day;
+    let depart_end = (state_keeper.step_limit - max_travel)
+        .min(2 * 365 * step_day);
+
+    let mut lowest_dv = f64::INFINITY;
+    let mut lowest_dv_pos: [u32;2] = [0,0];
+    let mut lowest_dv_short: bool = true;
+    for travel in (30*3*step_day .. 30*12*step_day).step_by(step_day as usize) {
+        let mut row = Vec::with_capacity(depart_end as usize / step_day as usize);
+        for depart in (0..depart_end).step_by(step_day as usize) {
+            let ip1 = interplanetary(&state_keeper, depart, depart + travel, 3, 4, true);
+            let ip2 = interplanetary(&state_keeper, depart, depart + travel, 3, 4, false);
+            let mut is_ip1_lowest = true;
+            let mut dv = f64::INFINITY;
+            if ip1.dv1 + ip1.dv2 < ip2.dv1 + ip2.dv2 {
+                dv = ip1.dv1 + ip1.dv2;
+            } else {
+                dv = ip2.dv1 + ip2.dv2;
+                is_ip1_lowest = false;
+            }
+            row.push(dv as f32);
+
+            if dv < lowest_dv {
+                lowest_dv = dv;
+                lowest_dv_pos = [depart,travel];
+                lowest_dv_short = is_ip1_lowest;
+            }
+        }
+        dv_grid.push(row);
+    }
+
+    state_keeper.interplanetary_selection.2 = lowest_dv_pos[0];
+    state_keeper.interplanetary_selection.3 = lowest_dv_pos[0]+lowest_dv_pos[1];
+    state_keeper.interplanetary_selection.4 = lowest_dv_short;
+    state_keeper.interplanetary = Some(interplanetary(&state_keeper, state_keeper.interplanetary_selection.2, state_keeper.interplanetary_selection.3, state_keeper.interplanetary_selection.0, state_keeper.interplanetary_selection.1, state_keeper.interplanetary_selection.4));
+
+    let height = dv_grid.len() as u32;
+    let width  = dv_grid.get(0).map_or(0, |r| r.len()) as u32;
+    make_porkchop_plot(&dv_grid, width, height).unwrap();
 }
 
 fn display_state(
@@ -318,10 +366,7 @@ fn display_state(
     mut body_display_query: Query<(&mut GridCell<i64>, &mut Transform), (With<BodyDisplayGrid>, Without<OrbitDisplay>)>,
     mut root_grid: Single<&mut Grid<i64>, With<RootGrid>>,
     mut hypothetical_query: Single<(&mut Mesh3d, &mut GridCell<i64>, &mut Transform), (With<OrbitDisplay>, With<Hypothetical>)>,
-    mut porkchop_image: Single<(&mut PorkchopImage)>,
     camera: Single<(&Camera, &GlobalTransform, &mut CameraState)>,
-    keys: Res<ButtonInput<KeyCode>>,
-    mut images: ResMut<Assets<Image>>,
 ) {
     let (camera, camera_global_transform, mut camera_state) = camera.into_inner();
     let start = Instant::now();
@@ -332,87 +377,70 @@ fn display_state(
         .cloned()
         .collect();
 
-    let (porkchop_image_ref) = &porkchop_image.into_inner().handle;
-
-    if keys.just_pressed(KeyCode::KeyP) {
-        if let Some(porkchop_image) = images.get_mut(porkchop_image_ref) {
-            let delta_step = 864;
-            for i in 0..porkchop_image.width() {
-                let departure_step = state_keeper.current_step + delta_step * i;
-                for j in 0..porkchop_image.height() {
-                    let arrival_step = state_keeper.current_step + (delta_step * (porkchop_image.height() - j));
-                    if departure_step < state_keeper.last_step_computed && arrival_step < state_keeper.last_step_computed && arrival_step > departure_step {
-                        let d_step = (arrival_step - departure_step);
-                        let dt = d_step as f64 * state_keeper.dt;
-                        let mu = state_keeper.info.get(&0).unwrap().mu;
-                        let r1 = state_keeper.state.get(&departure_step).unwrap().get(&3).unwrap()[0];
-                        let v1 = state_keeper.state.get(&departure_step).unwrap().get(&3).unwrap()[1];
-                        let r2 = state_keeper.state.get(&arrival_step).unwrap().get(&4).unwrap()[0];
-                        let v2 = state_keeper.state.get(&arrival_step).unwrap().get(&4).unwrap()[1];
-                        if let Ok((v1_new_1, v2_new_1)) = lambert_bate::get_velocities(r1.to_array(), r2.to_array(), dt, mu, true, 1e-7, 100) {
-                            if let Ok((v1_new_2, v2_new_2)) = lambert_bate::get_velocities(r1.to_array(), r2.to_array(), dt, mu, false, 1e-7, 100) {
-                                let delta_v_1 = (DVec3::from_array(v1_new_1) - v1).length().abs() + (DVec3::from_array(v2_new_1) - v2).length().abs();
-                                let delta_v_2 = (DVec3::from_array(v1_new_2) - v1).length().abs() + (DVec3::from_array(v2_new_2) - v2).length().abs();
-                                let lowest = delta_v_1.min(delta_v_2);
-                                let width = porkchop_image.width() as usize;
-                                let idx = ((j as usize) * width + (i as usize)) * 4;
-
-                                let lower = 7000.0;
-                                let upper = 20000.0;
-                                let ratio = ((lowest - lower).min(upper).max(lower) - lower) / lower;
-                                if lowest < upper {
-                                    porkchop_image.data[idx] = (255.0 * ratio) as u8;       // Red
-                                    porkchop_image.data[idx + 1] = 0;   // Green
-                                    porkchop_image.data[idx + 2] = (255.0 * (1.0 - ratio)) as u8;   // Blue
-                                    porkchop_image.data[idx + 3] = 255;          // Alpha (fully opaque)
-                                } else {
-                                    porkchop_image.data[idx] = 255;       // Red
-                                    porkchop_image.data[idx + 1] = 255;   // Green
-                                    porkchop_image.data[idx + 2] = 255;   // Blue
-                                    porkchop_image.data[idx + 3] = 255;          // Alpha (fully opaque)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+    // Display the interplanetary "hypothetical" orbit, if it exists
+    let (mut hypothetical_mesh3d, mut hypothetical_gridcell, mut hypothetical_transform) = hypothetical_query.into_inner();
+    if let Some(f) = &state_keeper.interplanetary {
+        let mut oe = &f.oe0;
+        let mut show = false;
+        let mut id = 0;
+        if state_keeper.inertial == f.body0 {
+            oe = &f.oe0;
+            show = true;
+            id = f.body0;
+        } else if state_keeper.inertial == f.body1 {
+            oe = &f.oe1;
+            show = true;
+            id = f.body1;
+        } else if state_keeper.inertial == f.body2 {
+            oe = &f.oe2;
+            show = true;
+            id = f.body2;
         }
+
+        if show {
+            let mut mesh = Mesh::new(PrimitiveTopology::LineStrip, Default::default());
+            let mut positions: Vec<Vec3> = oe_to_vec(&oe);
+            let p0= positions[0];
+
+            let (new_grid_cell, new_translation) = root_grid.translation_to_grid(p0.as_dvec3() + state_keeper.state.get(&state_keeper.current_step).unwrap().get(&id).unwrap()[0]);
+            *hypothetical_gridcell = new_grid_cell;
+            hypothetical_transform.translation = new_translation;
+
+            for i in 0..positions.len() {
+                positions[i] = positions[i] - p0;
+            }
+
+            mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, positions);
+            hypothetical_mesh3d.0 = meshes.add(mesh);
+        } else {
+            let mut mesh = Mesh::new(PrimitiveTopology::LineStrip, Default::default());
+            let positions: Vec<Vec3> = Vec::new();
+
+            let (new_grid_cell, new_translation) = root_grid.translation_to_grid(DVec3::ZERO);
+            *hypothetical_gridcell = new_grid_cell;
+            hypothetical_transform.translation = new_translation;
+
+            mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, positions);
+            hypothetical_mesh3d.0 = meshes.add(mesh);
+        }
+    } else {
+        let mut mesh = Mesh::new(PrimitiveTopology::LineStrip, Default::default());
+        let positions: Vec<Vec3> = Vec::new();
+
+        let (new_grid_cell, new_translation) = root_grid.translation_to_grid(DVec3::ZERO);
+        *hypothetical_gridcell = new_grid_cell;
+        hypothetical_transform.translation = new_translation;
+
+        mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, positions);
+        hypothetical_mesh3d.0 = meshes.add(mesh);
     }
 
-    // // Calculate, display the hypothetical orbit
-    // let (mut hypothetical_mesh3d, mut hypothetical_gridcell, mut hypothetical_transform) = hypothetical_query.into_inner();
-    // let d_step = 207360;
-    // if true && state_keeper.last_step_computed > state_keeper.current_step + d_step  { // If displaying an interplanetary trajectory
-    //     let dt = d_step as f64 * state_keeper.dt;
-    //     state_keeper.interplanetary = solve_interplanetary(0, 3, 4, &state_keeper.state.get(&state_keeper.current_step).unwrap().get(&3).unwrap()[0], &state_keeper.state.get(&(state_keeper.current_step+d_step)).unwrap().get(&4).unwrap()[0], state_keeper.info.get(&0).unwrap().mu, dt);
-    //     let mut oe = &state_keeper.interplanetary.oe0;
-    //
-    //     if state_keeper.inertial == state_keeper.interplanetary.body0 {
-    //         oe = &state_keeper.interplanetary.oe0;
-    //     } else if state_keeper.inertial == state_keeper.interplanetary.body1 {
-    //         oe = &state_keeper.interplanetary.oe1;
-    //     } else if state_keeper.inertial == state_keeper.interplanetary.body2 {
-    //         oe = &state_keeper.interplanetary.oe2;
-    //     }
-    //
-    //     let mut mesh = Mesh::new(PrimitiveTopology::LineStrip, Default::default());
-    //     let p0 = position_from_true_anomoly(&oe, 0.0);
-    //     let sub = p0;
-    //     let positions: Vec<Vec3> = oe_to_vec(&oe, &sub);
-    //
-    //     let (new_grid_cell, new_translation) = root_grid.translation_to_grid(sub);
-    //     *hypothetical_gridcell = new_grid_cell;
-    //     hypothetical_transform.translation = new_translation;
-    //
-    //     mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, positions);
-    //     hypothetical_mesh3d.0 = meshes.add(mesh);
-    // }
-
-    // Display the body and orbit of each body
+    // Display the body and orbit of each body at the current step
     for id in body_ids {
         let body_display_grid_id = state_keeper.info.get(&id).unwrap().body_display_grid_id;
-        // let body_display_id = state_keeper.info.get(&id).unwrap().body_display_id;
         let orbit_display_id = state_keeper.info.get(&id).unwrap().orbit_display_id;
+
+        // Update the grid the body mesh is in to the correct position
         if let Some(body_display_grid_id) = body_display_grid_id {
             let (mut body_display_grid_gridcell, mut body_display_grid_transform) = body_display_query.get_mut(body_display_grid_id).unwrap();
             let pos = state_keeper.state.get(&state_keeper.current_step).unwrap().get(&id).unwrap()[0];
@@ -421,27 +449,27 @@ fn display_state(
             body_display_grid_transform.translation = new_translation;
         }
 
+        // Update the grid the orbit mesh is in to the correct position, and then update the mesh vertices accordingly
         if let Some(orbit_display_id) = orbit_display_id {
             let parent_id = state_keeper.info.get(&id).unwrap().kepler_parent;
             let parent_state = state_keeper.state.get(&state_keeper.current_step).unwrap().get(&parent_id).unwrap();
             let state = state_keeper.state.get(&state_keeper.current_step).unwrap().get(&id).unwrap();
-            // Adjust the origin of the mesh so that it is at the first point in the mesh
-            // TODO: Maybe position origin in the middle (average position of vec) of mesh? idk
             let (mut orbit_display_mesh3d, mut orbit_display_gridcell, mut orbit_display_transform) = orbit_display_query.get_mut(orbit_display_id).unwrap();
 
             if state_keeper.info.get(&id).unwrap().display_as_keplerian { // If we should display the orbit as keplerian, we calculate one full orbit (360deg), and then adjust each position for the origin of the mesh, parent body, and the inertial reference frame
-                if (state_keeper.info.get(&id).unwrap().kepler_parent == state_keeper.inertial) || (state_keeper.info.get(&id).unwrap().kepler_parent == 0) || (camera_state.focused == id) { // Only display keplerian orbits if the parent body is the inertial reference
+                if id == state_keeper.inertial || parent_id == state_keeper.inertial {
                     let oe = oe_from_rv(state_keeper.info.get(&parent_id).unwrap().mu, &sub_body_state(state, parent_state));
-
-                    let p0 = position_from_true_anomoly(&oe, 0.0);
-                    let sub = parent_state[0] + p0;
-
-                    let (new_grid_cell, new_translation) = root_grid.translation_to_grid(sub);
+                    let positions: Vec<Vec3> = oe_to_vec(&oe);
+                    let p0= positions[0];
+                    let (new_grid_cell, new_translation) = root_grid.translation_to_grid(p0.as_dvec3() + parent_state[0]);
                     *orbit_display_gridcell = new_grid_cell;
                     orbit_display_transform.translation = new_translation;
 
                     let mut mesh = Mesh::new(PrimitiveTopology::LineStrip, Default::default());
-                    let positions: Vec<Vec3> = oe_to_vec(&oe, &sub);
+                    let mut positions: Vec<Vec3> = positions;
+                    for i in 0..positions.len() {
+                        positions[i] = positions[i] - p0;
+                    }
                     mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, positions);
                     orbit_display_mesh3d.0 = meshes.add(mesh);
                 } else {
@@ -456,36 +484,9 @@ fn display_state(
     }
 
     let duration = start.elapsed();
-    // info!("Display Oribs {:?}", duration);
+    // info!("Display Orbits {:?}", duration);
 }
 
-fn main_tick(mut state_keeper: ResMut<StateKeeper>, time: Res<Time>, keys: Res<ButtonInput<KeyCode>>,) {
-    state_keeper.step_limit = 3153600;
-    if keys.just_pressed(KeyCode::Space) {
-        state_keeper.paused = !state_keeper.paused;
-    }
+fn main_tick(mut state_keeper: ResMut<StateKeeper>) {
 
-    let speed = 500;
-
-    if keys.pressed(KeyCode::Equal) {
-        let mut new: i32 = state_keeper.current_step as i32 + speed;
-        if new > state_keeper.last_step_computed as i32 - 1001 {
-            new = state_keeper.last_step_computed as i32 - 1001;
-            if new < 1 {
-                new = 0
-            }
-        }
-        state_keeper.current_step = new as u32;
-    }
-    if keys.pressed(KeyCode::Minus) {
-        let mut new = state_keeper.current_step as i32 - speed;
-        if new < 1 {
-            new = 0
-        }
-        state_keeper.current_step = new as u32;
-    }
-
-    if !state_keeper.paused {
-        state_keeper.current_step = state_keeper.last_step_computed - 1000;
-    }
 }

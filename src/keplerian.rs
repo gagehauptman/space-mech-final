@@ -7,6 +7,7 @@ use bevy_math::{DMat3, DVec3};
 use big_space::prelude::*;
 // https://ssd.jpl.nasa.gov/planets/approx_pos.html
 
+#[derive(Clone)]
 pub struct OE {
     pub a: f64,
     pub e: f64,
@@ -29,15 +30,6 @@ impl OE {
     }
 }
 
-pub struct Interplanetary {
-    pub body0: u32,
-    pub body1: u32,
-    pub body2: u32,
-    pub oe0: OE,
-    pub oe1: OE,
-    pub oe2: OE,
-}
-
 impl fmt::Display for OE {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -51,15 +43,13 @@ impl fmt::Display for OE {
 pub fn position_from_true_anomoly(oe: &OE, f: f64) -> DVec3 {
     let r_mag = oe.a * (1.0 - oe.e.powi(2)) / (1.0 + oe.e * f.cos());
     let r_pqw = DVec3::from_array([r_mag * f.cos(), r_mag * f.sin(), 0.0]);
-    let rot = pqw_to_inertial_rot(&oe);
+    let rot = pqw_to_inertial_rot(oe.Ω, oe.ω, oe.i);
     rot * r_pqw
 }
 
 
 
-pub fn pqw_to_inertial_rot(oe: &OE) -> DMat3 {
-    let (Ω, ω, i) = (oe.Ω, oe.ω, oe.i);
-
+pub fn pqw_to_inertial_rot(Ω: f64, ω: f64, i: f64 ) -> DMat3 {
     DMat3::from_cols(
         DVec3::new(
             Ω.cos() * ω.cos() - Ω.sin() * ω.sin() * i.cos(),
@@ -161,25 +151,25 @@ pub fn lambert(mu: f64, r1: &DVec3, r2: &DVec3, dt: f64) -> OE {
     oe_from_rv(mu, &[*r1,DVec3::from_array(v1)])
 }
 
-pub fn oe_to_vec(oe: &OE, sub: &DVec3) -> Vec<Vec3> {
+pub fn oe_to_vec(oe: &OE) -> Vec<Vec3> {
     let mut positions: Vec<Vec3> = Vec::new();
-    for i in 0..3600 {
-        let theta = (i as f64 / 10.0).to_radians();
-        let r = position_from_true_anomoly(&oe, theta) - sub;
-        positions.push(r.as_vec3());
+    if oe.a >= 0.0 { // If elliptical
+        for i in 0..3600 {
+            let theta = (i as f64 / 10.0).to_radians();
+            let r = position_from_true_anomoly(&oe, theta);
+            positions.push(r.as_vec3());
+        }
+    } else { // If hyperbolic
+        let theta_limit = (-1.0 / oe.e).acos();
+        let steps = 3600;
+        let dtheta = (theta_limit * 2.0) / steps as f64;
+
+        for i in 10..steps-10 {
+            let theta = -theta_limit + dtheta * i as f64;
+            let r = position_from_true_anomoly(&oe, theta);
+            positions.push(r.as_vec3());
+        }
     }
 
     positions
-}
-
-
-pub fn solve_interplanetary(b0: u32, b1: u32, b2: u32, r1: &DVec3, r2: &DVec3, b0mu: f64, dt: f64) -> Interplanetary {
-    Interplanetary {
-        body0: b0,
-        body1: b1,
-        body2: b2,
-        oe0: lambert(b0mu, r1, r2, dt),
-        oe1: OE::empty(),
-        oe2: OE::empty()
-    }
 }

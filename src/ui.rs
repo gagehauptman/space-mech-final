@@ -38,34 +38,6 @@ pub fn setup_ui(mut commands: Commands, state_keeper: Res<StateKeeper>, mut imag
             commands.entity(menu_root).add_child(entity);
         }
     }
-
-    let porkchop_root = commands.spawn((
-        Node {
-            top: Val::Px(50.0),
-            right: Val::Px(5.0),
-            position_type: PositionType::Absolute,
-            flex_direction: FlexDirection::Column,
-            padding: UiRect::all(Val::Px(5.0)),
-            width: Val::Px(500.0),
-            ..default()
-        },
-        )).id();
-
-    let image_handle = images.add(Image::new_fill(
-        Extent3d { width: 2500, height: 2500, depth_or_array_layers: 1 },
-        TextureDimension::D2,
-        &[255u8, 255u8, 255u8, 255u8],
-        TextureFormat::Rgba8UnormSrgb,
-        Default::default()
-    ));
-
-
-    let entity = commands.spawn((
-        ImageNode::new(image_handle.clone()),
-        PorkchopImage{handle: image_handle.clone()}
-        )).id();
-
-    commands.entity(porkchop_root).add_child(entity);
 }
 
 pub fn button_interaction(mut state_keeper: ResMut<StateKeeper>, mut button_query: Query<(&Interaction, &BodySelectButton)>, mut camera: Single<(&Camera, &GlobalTransform, &mut CameraState)>) {
